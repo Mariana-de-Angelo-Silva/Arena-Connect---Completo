@@ -27,4 +27,4 @@ const ArbitroView = {
             if (arbitros.length === 0) return console.log("Nenhum arbitro no sistema.");
             arbitros.forEach(({ arbitro, numeroCredencial, anosExperiencia }) => arbitro.exibir());
         },
-}
+}                                                       
