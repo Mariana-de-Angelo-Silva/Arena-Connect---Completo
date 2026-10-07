@@ -20,6 +20,8 @@ function main() {
         else if (op === '9') sistema.vincularAtletaEquipe();
         else if (op === '10') sistema.desvincularAtletaEquipe();
         else if (op === '11') sistema.removerEquipe();
+        else if (op === '12') sistema.registrarPartida();
+        else if (op === '13') sistema. listarPartidas();
         else if (op === '0') break;
         else MenuView.mostrarOpcaoInvalida();
     }

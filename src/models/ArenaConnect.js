@@ -39,7 +39,7 @@ class ArenaConnect {
     }
 
     adicionarTurma() {
-        const nome = prompt("Nome da nova turma: ");
+        const nome = prompt();
         try {
             this.turmas.push(CadastroFactory.criarTurma(this.idTurmaContador, nome));
             this.idTurmaContador++;
@@ -216,7 +216,7 @@ class ArenaConnect {
     }
 
 
-    registrarPartida(idEquipeA, idEquipeA, golsA, golsB){
+    registrarPartida(idEquipeA, idEquipeB, golsA, golsB){
         const equipeA = this.buscarEquipeOuFalhar(idEquipeA);
         const equipeB = this.buscarEquipeOuFalhar(idEquipeB);
 
@@ -250,7 +250,7 @@ class ArenaConnect {
 
     
     listarPartidas(){
-        return this.listarPartidas.map(partida => ({
+        return this.listaPartidas.map(partida => ({
             partida,
             nomeEquipeA: this.#rotularEquipe(partida.idEquipeA),
             nomeEquipeB: this.#rotularEquipe(partida.idEquipeB)

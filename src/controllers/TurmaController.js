@@ -5,7 +5,8 @@ const TurmaController = {
     adicionar(sistema){
        const nome = TurmaView.perguntarNome();
         try {
-            const { turma } = sistema.adicionarTurma(nome);
+            sistema.buscarTurmaOuFalhar
+            const turma= sistema.adicionarTurma(nome);
             TurmaView.mostrarTurmaCriada();
         } catch(erro) {
             TurmaView.mostrarErroCadastro(erro.mensage);

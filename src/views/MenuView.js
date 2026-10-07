@@ -17,6 +17,8 @@ const MenuView = {
  9. Vincular Atleta à Equipe
  10. Desvincular Atleta da Equipe
  11. Remover Equipe
+ 12. Registrar Partida
+ 13. Listar Partida 
  0. Sair
  ==============================`);
         return prompt("Escolha: ");
