@@ -1,7 +1,25 @@
 const Modalidade = require('.//src/models/Modalidade');
 const CadastroFactory = require('./src/models/CadastroFactory');
+const fn = require ('fs');
+const path = require ('path');
+
+
+const ARQUIVO = path.join(__dirname,'memoriaArena.json');
+
+class Pessoa {
+    #Atleta;
+    #Arbitro;
+
+        contructor (atleta, arbitro) {
+            this.Atleta = atleta;
+            this.Arbitro = arbitro;
+        }
+
+        get Atleta
+}
 
 class ArenaConnect {
+
     static #instancia = null;
     // SINGLETON: todo o sistema pega o gerenciador por aqui — nunca por `new`.
     static getInstancia() {
@@ -201,6 +219,10 @@ class ArenaConnect {
             console.log(`✖ Não foi possível desvincular: ${erro.message}`);
         }
     }
+
+
+
+
 }
 
 
