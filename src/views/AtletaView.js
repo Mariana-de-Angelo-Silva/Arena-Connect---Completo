@@ -7,7 +7,7 @@ const AtletaView = {
     perguntarNome(){
         return prompt("Nome do Atleta: ");
     },
-    perguntarId(rotulo = "ID do Atleta: "){
+    perguntarId(rotulo = "ID do Atlet'informa: "){
         return parseInt(prompt(rotulo));
     },
     mostrarAtletaVinculado(nomeAtleta, nomeTurma){
@@ -16,7 +16,7 @@ const AtletaView = {
     mostrarErroCadastro(mensagem) {
         console.log(`✖ Não foi possível cadastrar o atleta: ${mensagem}`);
     },
-    listarAtletas(lista){
+    listarAtletas(atletas){
         console.log("\n=== LISTA DE ATLETAS ===");
         if (lista.length === 0) return console.log("Nenhum atleta no sistema.");
         lista.forEach(({ atleta, nomeTurma }) => atleta.exibir(nomeTurma));

@@ -3,17 +3,16 @@ const TurmaView = require('../views/TurmaView');
 const TurmaController = {
 
     adicionar(sistema){
-        //Listar Turmas - TurmaVieW
+       const nome = TurmaView.perguntarNome();
         try {
-            const nome = TurmaView.perguntarNome();
-            const { turmaNova } = sistema.adicionarTurma(idTurma, nome);
-            TurmaView.mostrarTurmaCriada( turma.nome, turma.id);
+            const { turma } = sistema.adicionarTurma(nome);
+            TurmaView.mostrarTurmaCriada();
         } catch(erro) {
-            TurmaView.mostrarErroCadastro(erro.message);
+            TurmaView.mostrarErroCadastro(erro.mensage);
         }
     },
 
     listar(sistema) {
-        TurmaView.listar(sistema.listarTurmas());
+        TurmaView.turmaListar(sistema.listarTurmas());
     },
 }

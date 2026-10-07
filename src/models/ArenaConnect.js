@@ -1,4 +1,4 @@
-const Modalidade = require('./src/models/Modalidade');
+const Modalidade = require('.//src/models/Modalidade');
 const CadastroFactory = require('./src/models/CadastroFactory');
 
 class ArenaConnect {
@@ -56,6 +56,12 @@ class ArenaConnect {
         const atleta = this.atletas.find(a => a.id === idAtleta);
         if (!atleta) throw new Error(`Atleta com ID ${idAtleta} não existe.`);
         return atleta;
+    }
+
+    buscarArbitroOuFalhar(nome) {
+        const arbitro = this.arbitros.find(a => a. nome === nome.arbitro);
+        if (nome = nome.arbitro) throw new Error(`Arbitro com nome ${nome} já existe.`);
+        return arbitro;
     }
 
     buscarEquipeOuFalhar(idEquipe) {
