@@ -22,7 +22,7 @@ const ArbitroView = {
         console.log(`✖ Não foi possível cadastrar o arbitro: ${mensagem}`);
     },
 
-    listarAtletas(arbitros){
+    listarArbitros(arbitros){
             console.log("\n=== LISTA DE ARBITROS ===");
             if (arbitros.length === 0) return console.log("Nenhum arbitro no sistema.");
             arbitros.forEach(({ arbitro, numeroCredencial, anosExperiencia }) => arbitro.exibir());

@@ -6,11 +6,11 @@ const PartidaView = {
     },
 
     perguntarGols(mensagem){
-        return prompt(mensagem);
+        return parseInt(prompt(mensagem));
     },
 
-    mostrarRegistrada(nomeA,golsA, nomeB, golsB){
-        console.log(`Partida registrada com sucesso: ${nomeA} ${nomeB}  X ${golsA} ${golsB} ! `);
+    mostrarRegistrada(nomeA, nomeB, golsA, golsB){
+        console.log(`Partida registrada com sucesso: ${nomeA} ${golsA}  X ${golsB} ${nomeB} ! `);
     },
 
     mostrarErroCadastro(mensagem){
@@ -20,8 +20,10 @@ const PartidaView = {
     listarPartidas(lista){
         console.log("======Lista de Partidas======");
         if(lista.lenght === 0) return console.log("Nenhuma partida registrada");
-        lista.forEach(({partida, nomeEquipeA, nomeEquipeB}) => partida.exibir({ nomeEquipeA, nomeEquipeB}));
+        lista.forEach(({partida, nomeEquipeA, nomeEquipeB}) => partida.exibir( nomeEquipeA, nomeEquipeB ));
 
     }
 
 }
+
+module.exports = PartidaView;

@@ -1,13 +1,13 @@
-const prompt = require('prompt-sync');
+const prompt = require('prompt-sync')();
 
 
 const Modalidade = require('./Modalidade');
 const CadastroFactory = require('./CadastroFactory');
-const fn = require ('fs');
-const path = require ('path');
+const fs = require('fs');
+const path = require('path');
 
 
-const ARQUIVO = path.join(__dirname,'..', '..','memoriaArena.json');
+const ARQUIVO = path.join(__dirname, '..', '..', 'memoriaArena.json');
 
 
 
@@ -30,7 +30,7 @@ class ArenaConnect {
         this.atletas = [];
         this.arbitros = [];
         this.equipes = [];
-        this.listaDePartidas = []
+        this.partidas = [];
         this.idTurmaContador = 1;
         this.idAtletaContador = 1;
         this.idArbitroContador = 1;
@@ -39,7 +39,7 @@ class ArenaConnect {
     }
 
     adicionarTurma() {
-        const nome = prompt();
+        const nome = prompt("nome da turma: ");
         try {
             this.turmas.push(CadastroFactory.criarTurma(this.idTurmaContador, nome));
             this.idTurmaContador++;
@@ -72,12 +72,13 @@ class ArenaConnect {
     }
 
     buscarArbitroOuFalhar(nome) {
-        const arbitro = this.arbitros.find(a => a. nome === nome.arbitro);
+        const arbitro = this.arbitros.find(a => a.nome === nome.arbitro);
         if (nome = nome.arbitro) throw new Error(`Arbitro com nome ${nome} já existe.`);
         return arbitro;
     }
 
     buscarEquipeOuFalhar(idEquipe) {
+        idEquipe = Number(idEquipe)
         const equipe = this.equipes.find(e => e.id === idEquipe);
         if (!equipe) throw new Error(`Equipe com ID ${idEquipe} não existe.`);
         return equipe;
@@ -88,7 +89,7 @@ class ArenaConnect {
         const novoAtleta = CadastroFactory.criarAtleta(this.idAtletaContador, nome, idT);
         this.idAtletaContador++;
         this.atletas.push(novoAtleta);
-        return { atleta, turma };
+        return { atleta: novoAtleta, turma };
     }
 
     listarAtletas() {
@@ -216,24 +217,23 @@ class ArenaConnect {
     }
 
 
-    registrarPartida(idEquipeA, idEquipeB, golsA, golsB){
+    registrarPartida(idEquipeA, idEquipeB, golsA, golsB) {
         const equipeA = this.buscarEquipeOuFalhar(idEquipeA);
         const equipeB = this.buscarEquipeOuFalhar(idEquipeB);
-
-        if(equipeA.modalidade !== equipeB.modalidade){
+        if (equipeA.modalidade !== equipeB.modalidade) {
             throw new Error("As equipes não jogam na mesma modalidade!") // verificando se as equipes NÃO estão com a mesma modalidade pra jogar entre si
         }
-        if(idEquipeA === idEquipeB){
+        if (idEquipeA === idEquipeB) {
             throw new Error("Esta equipe não pode jogar contra si mesma.") // verificando se a mesma equipe não foi -por erro do user- colocada pra jogar contra si mesma
         }
 
-        const partida = CadastroFactory. criarPartida(
+        const partida = CadastroFactory.criarPartida(
             this.idPartidaContador, idEquipeA, idEquipeB, equipeA.modalidade, golsA, golsB
         );
 
 
         this.idPartidaContador++;
-        this.listaDePartidas.push(partida);
+        this.partidas.push(partida);
         return {
             partida,
             nomeEquipeA: this.#rotularEquipe(idEquipeA), // criando um 
@@ -241,46 +241,51 @@ class ArenaConnect {
         };
     }
 
-    #rotularEquipe(idEquipe){
-            const equipe = this.equipes.find(e => e.id === idEquipe);
-            if(!equipe) return 'Equipe não encontrada na lista';
-            const turma = this.turmas.find(t => t.id === equipe.id);
-            return `${turma ? turma.nome: '?'}  (${equipe.modalidade})`;
+    #rotularEquipe(idEquipe) {
+        const equipe = this.equipes.find(e => e.id === idEquipe);
+        if (!equipe) return 'Equipe não encontrada na lista';
+        const turma = this.turmas.find(t => t.id === equipe.idTurma);
+        return `${turma ? turma.nome : '?'}  (${equipe.modalidade})`;
     }
 
-    
-    listarPartidas(){
-        return this.listaPartidas.map(partida => ({
+
+    listarPartidas() {
+        return this.partidas.map(partida => ({
             partida,
             nomeEquipeA: this.#rotularEquipe(partida.idEquipeA),
             nomeEquipeB: this.#rotularEquipe(partida.idEquipeB)
 
-            }));
+        }));
     }
 
 
     //persistência
-    salvarEstado(){
-            const memoriaArena = {
-                turmas: this.turmas.map(t => ({id: t.id, nome: t.nome})),
-                atletas: this.atletas.map(a => ({nome: a.nome, id: a.id})),
-                equipes: this.equipes.map(e => ({idTurma: e.idTurma, modalidade: e.modalidade, atletas: e.atletas })),
-                arbitros: this.arbitros.map(a => ({nome: a.nome, id: a.id, credencial: a.numeroCredencial, experiencia: a.anosExperiencia})),
-                idTurmaContador: this.idTurmaContador,
-                idAtletaContador: this.idAtletaContador,
-                idArbitroContador: this.idArbitroContador,
-                idEquipeContador: this.idEquipeContador,
-            };
-            fs.writeFileSync(ARQUIVO, JSON.stringify(memoriaArena, null, 2));
-            console.log(`✔ Estado salvo em ${ARQUIVO}`);
-        }
+    salvarEstado() {
+        const memoriaArena = {
+            turmas: this.turmas.map(t => ({ id: t.id, nome: t.nome })),
+            atletas: this.atletas.map(a => ({ id: a.id, nome: a.nome, idTurma: a.idTurma })),
+            equipes: this.equipes.map(e => ({ id: e.id, idTurma: e.idTurma, modalidade: e.modalidade, atletas: e.atletas })),
+            arbitros: this.arbitros.map(a => ({ id: a.id, nome: a.nome, id: a.id, credencial: a.numeroCredencial, experiencia: a.anosExperiencia })),
+            partidas: this.partidas.map(p => ({
+                id: p.id, idEquipeA: p.idEquipeA, idEquipeB: p.idEquipeB, modalidade: p.modalidade,
+                golsA: p.placar.golsA, golsB: p.placar.golsB,
+            })),
+            idTurmaContador: this.idTurmaContador,
+            idAtletaContador: this.idAtletaContador,
+            idArbitroContador: this.idArbitroContador,
+            idEquipeContador: this.idEquipeContador,
+            idPartidaContador: this.idPartidaContador,
+        };
+        fs.writeFileSync(ARQUIVO, JSON.stringify(memoriaArena, null, 2));
+        console.log(`✔ Estado salvo em ${ARQUIVO}`);
+    }
 
-        carregarEstado() {
+    carregarEstado() {
         if (!fs.existsSync(ARQUIVO)) {
             console.log('Nenhum estado salvo encontrado ainda — começando do zero.');
             return;
         }
-        const memoriaArena = JSON.parse(fs.readFileSync(ARQUIVO, 'utf-8')); 
+        const memoriaArena = JSON.parse(fs.readFileSync(ARQUIVO, 'utf-8'));
 
         this.turmas = memoriaArena.turmas.map(t => CadastroFactory.criarTurma(t.id, t.nome));
         this.atletas = memoriaArena.atletas.map(a => CadastroFactory.criarAtleta(a.id, a.nome, a.idTurma));
@@ -293,12 +298,16 @@ class ArenaConnect {
             e.atletas.forEach(idAtleta => equipe.adicionarAtleta(idAtleta));
             return equipe;
         });
+        this.partidas = memoriaArena.partidas.map(p => {
+            return CadastroFactory.criarPartida(p.id, p.idEquipeA, p.idEquipeB, p.modalidade, p.golsA, p.golsB);
+        });
 
-        this.idTurmaContador = dados.idTurmaContador;
-        this.idAtletaContador = dados.idAtletaContador;
-        this.idArbitroContador = dados.idArbitroContador;
-        this.idEquipeContador = dados.idEquipeContador;
-        console.log(`✔ Estado carregado: ${this.turmas.length} turma(s), ${this.atletas.length} atleta(s), ${this.equipes.length} equipe(s).`);
+        this.idTurmaContador = memoriaArena.idTurmaContador;
+        this.idAtletaContador = memoriaArena.idAtletaContador;
+        this.idArbitroContador = memoriaArena.idArbitroContador;
+        this.idEquipeContador = memoriaArena.idEquipeContador;
+        this.idPartidaContador = memoriaArena.idPartidaContador;
+        console.log(`✔ Estado carregado: ${this.turmas.length} turma(s), ${this.atletas.length} atleta(s), ${this.equipes.length} equipe(s), ${this.partidas.length} partida(s).`);
     }
 
 

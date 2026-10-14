@@ -13,7 +13,8 @@ class Placar{
         set golsA(valor){
             // ABAIXO: VERIFICAÇÃO  -> o golsA precisa receber um valor. Esse valor NÃO vai ser aceito se ele NÃO for: inteiro, número ou negativo
             if(!Number.isInteger(valor) || valor < 0) {
-                console.log('[Erro] Gol informado é inválido');
+
+                console.log('[Erro] Gol informado é inválido' + valor);
                 return;
             } 
             this.#golsA = valor;

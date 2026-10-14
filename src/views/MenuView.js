@@ -19,6 +19,7 @@ const MenuView = {
  11. Remover Equipe
  12. Registrar Partida
  13. Listar Partida 
+ 99. Salvar Estado 
  0. Sair
  ==============================`);
         return prompt("Escolha: ");

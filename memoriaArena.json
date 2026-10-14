@@ -1,0 +1,111 @@
+{
+  "turmas": [
+    {
+      "id": 1,
+      "nome": "1B"
+    },
+    {
+      "id": 2,
+      "nome": "2A"
+    },
+    {
+      "id": 3,
+      "nome": "1B"
+    },
+    {
+      "id": 4,
+      "nome": "2 ANO EM"
+    }
+  ],
+  "atletas": [
+    {
+      "id": 2,
+      "nome": "mariana",
+      "idTurma": 1
+    },
+    {
+      "id": 3,
+      "nome": "roberto",
+      "idTurma": 2
+    },
+    {
+      "id": 4,
+      "nome": "Roberval",
+      "idTurma": 3
+    },
+    {
+      "id": 5,
+      "nome": "Giovanni",
+      "idTurma": 4
+    }
+  ],
+  "equipes": [
+    {
+      "id": 1,
+      "idTurma": 1,
+      "modalidade": "Futsal Masculino",
+      "atletas": []
+    },
+    {
+      "id": 2,
+      "idTurma": 2,
+      "modalidade": "Futsal Masculino",
+      "atletas": []
+    },
+    {
+      "id": 3,
+      "idTurma": 3,
+      "modalidade": "Handebol Misto",
+      "atletas": [
+        4
+      ]
+    }
+  ],
+  "arbitros": [
+    {
+      "id": 1,
+      "nome": "Izadora",
+      "credencial": 121,
+      "experiencia": 5
+    }
+  ],
+  "partidas": [
+    {
+      "id": 1,
+      "idEquipeA": 1,
+      "idEquipeB": 2,
+      "modalidade": "Futsal Masculino",
+      "golsA": 3,
+      "golsB": 4
+    },
+    {
+      "id": 2,
+      "idEquipeA": 2,
+      "idEquipeB": 1,
+      "modalidade": "Futsal Masculino",
+      "golsA": 5,
+      "golsB": 4
+    },
+    {
+      "id": 3,
+      "idEquipeA": 1,
+      "idEquipeB": 2,
+      "modalidade": "Futsal Masculino",
+      "golsA": 3,
+      "golsB": 4
+    },
+    {
+      "id": 4,
+      "idEquipeA": 2,
+      "idEquipeB": 1,
+      "modalidade": "Futsal Masculino",
+      "golsA": 5,
+      "golsB": 0
+    }
+  ],
+  "idTurmaContador": 5,
+  "idAtletaContador": 6,
+  "idArbitroContador": 2,
+  "idEquipeContador": 4,
+  "idPartidaContador": 5
+}

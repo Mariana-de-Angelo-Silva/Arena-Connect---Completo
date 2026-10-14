@@ -3,18 +3,18 @@ const PartidaView = require('../views/PartidaView');
 const PartidaController = {
 
         registrarPartida(sistema){
-            sistema.listarEquipe();
+            sistema.listarEquipes();
 
             try{
                 const idEquipeA = PartidaView.perguntarIdEquipe("Informe o ID da equipe A: ");
                 const idEquipeB = PartidaView.perguntarIdEquipe("Informe o ID da equipe B: ");
                 const golsA= PartidaView.perguntarGols("Informe os gols da equipe A: ");
                 const golsB= PartidaView.perguntarGols("Informe os gols da equipe B: ");
-                const {equipeA, equipeB} = sistema.registrarPartida (idEquipeA, idEquipeB, golsA, golsB);
-                PartidaView.mostrarRegistrada(equipeA.modalidade, equipeB.modalidade, golsA, golsB );
+                const { nomeEquipeA, nomeEquipeB } = sistema.registrarPartida(idEquipeA, idEquipeB, golsA, golsB);
+                PartidaView.mostrarRegistrada(nomeEquipeA, nomeEquipeB, golsA, golsB );
 
             } catch (erro){
-                PartidaView.mostrarErroCadastro(mensagem);
+                PartidaView.mostrarErroCadastro(erro.message);
             }
 
         },
@@ -24,3 +24,5 @@ const PartidaController = {
         }    
     
 }
+
+module.exports = PartidaController;

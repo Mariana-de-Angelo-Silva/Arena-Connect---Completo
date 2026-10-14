@@ -2,6 +2,7 @@ const Modalidade = require('./Modalidade');
 const { Atleta, Arbitro } = require('./Pessoa');
 const Turma = require('./Turma');
 const Equipe = require('./Equipe');
+const Partida = require('./Partida')
 
 // FACTORY: um único ponto de criação das entidades. Os setters das classes só
 // imprimem "[ERRO]" e ignoram o valor inválido — a fábrica confere o resultado
@@ -36,12 +37,15 @@ class CadastroFactory {
         return arbitro;
     }
 
-    static CriarPartida(id,idEquipeA, idEquipeB, modalidade, golsA, golsB){
+    static criarPartida(id,idEquipeA, idEquipeB, modalidade, golsA, golsB){
         const partida  = new Partida (id,idEquipeA, idEquipeB, modalidade, golsA, golsB);
+        
+        console.log(partida)
         if(partida.idEquipeA === undefined) throw new Error ('Equipe A inválida');
         if(partida.idEquipeB === undefined) throw new Error ('Equipe B inválida');
-        if(partida.golsA === undefined) throw new Error ('Equipe gols da equipe A inválidos');
-        if(partida.golsB === undefined) throw new Error ('Equipe gols da equipe B inválidos');
+        if(partida.placar.golsA === undefined) throw new Error ('Equipe gols da equipe A inválidos');
+        if(partida.placar.golsB === undefined) throw new Error ('Equipe gols da equipe B inválidos');
+        return partida;
     }
 }
 

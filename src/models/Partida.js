@@ -8,32 +8,37 @@ class Partida {
     #placar;
 
     constructor(id, idEquipeA, idEquipeB, modalidade, golsA, golsB){
-        this.id = id;
+        console.log(id, idEquipeA, idEquipeB, modalidade, golsA, golsB)
+        this.#id = id;
         this.idEquipeA = idEquipeA;
         this.idEquipeB = idEquipeB;
         this.modalidade = modalidade;
-        this.#placar =  new Placar(golsA,golsB); // aqui acontece a composição -> Não faz sentido uma Partida não ter um Placar
+        this.#placar =  new Placar(golsA, golsB); // aqui acontece a composição -> Não faz sentido uma Partida não ter um Placar
     }
-
+    
+    get id(){ return this.#id;}
     
     // SETS:
 
     set idEquipeA(valor){
             if(!Number.isInteger(valor) || valor < 0) {
-                console.log("O ID dessa equipe é invalido!");
+                console.log("O ID A dessa equipe é invalido!");
                 return;
         }
         this.#idEquipeA = valor;
     }
-
+    
+    get idEquipeA(){ return this.#idEquipeA;}
 
     set idEquipeB(valor){
             if(!Number.isInteger(valor) || valor < 0) {
-                console.log("O ID dessa equipe é invalido!");
+                console.log("O ID B dessa equipe é invalido!");
                 return;
         }
         this.#idEquipeB = valor;
     }
+    
+    get idEquipeB(){ return this.#idEquipeB;}
 
     set modalidade(categoria){
         if(!categoria){
@@ -42,17 +47,11 @@ class Partida {
         }
         this.#modalidade = categoria;
     }
-    // GETS:
-
-    get idEquipeA(){ return this.#idEquipeA;}
-    
-    get idEquipeB(){ return this.#idEquipeB;}
 
     get modalidade(){ return this.#modalidade;}
+    // GETS:
 
-    get id(){ return this.#id;}
-
-    get Placar(){ return this.#placar;}
+    get placar(){ return this.#placar;}
 
 
     // Exibir:

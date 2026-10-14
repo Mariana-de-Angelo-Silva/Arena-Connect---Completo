@@ -16,7 +16,7 @@ const AtletaView = {
     mostrarErroCadastro(mensagem) {
         console.log(`✖ Não foi possível cadastrar o atleta: ${mensagem}`);
     },
-    listarAtletas(atletas){
+    listarAtletas(lista){
         console.log("\n=== LISTA DE ATLETAS ===");
         if (lista.length === 0) return console.log("Nenhum atleta no sistema.");
         lista.forEach(({ atleta, nomeTurma }) => atleta.exibir(nomeTurma));
