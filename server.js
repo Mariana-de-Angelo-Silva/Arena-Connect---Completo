@@ -4,6 +4,7 @@ const AtletaController = require('./src/controllers/AtletaController');
 const ArenaConnect = require('./src/models/ArenaConnect');
 const MenuView = require('./src/views/MenuView');
 
+
 function main() {
     const sistema = ArenaConnect.getInstancia();
 

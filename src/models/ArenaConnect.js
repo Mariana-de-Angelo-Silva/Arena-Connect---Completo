@@ -1,5 +1,6 @@
 const Modalidade = require('.//src/models/Modalidade');
 const CadastroFactory = require('./src/models/CadastroFactory');
+const { calcularClassificacao } = require('./Classificacao');
 const fn = require ('fs');
 const path = require ('path');
 
@@ -14,9 +15,8 @@ class Pessoa {
             this.Atleta = atleta;
             this.Arbitro = arbitro;
         }
-
-        get Atleta
-}
+        get Atleta (){}
+};
 
 class ArenaConnect {
 
@@ -219,6 +219,37 @@ class ArenaConnect {
             console.log(`✖ Não foi possível desvincular: ${erro.message}`);
         }
     }
+
+    classificacaoGeral() {
+        const modalidades = [...new Set(this.equipes.map(e => e.modalidade))];
+        return modalidades.map(modalidade => {
+            const equipes = this.equipes.filter(e => e.modalidade === modalidade);
+            const partidas = this.partidas.filter(p => p.modalidade === modalidade);
+            const linhas = calcularClassificacao(equipes, partidas)
+                .map(l => ({ ...l, nomeEquipe: this.rotularEquipe(l.idEquipe) }));
+            return { modalidade, linhas };
+        });
+    }
+
+    dadosTurmas(){
+        return this.turmas.map( t => ({id: t, nome: t.nome}))
+    }
+
+    dadosDaTurma(idTurma){
+        const turma = this.buscarTurmaOuFalhar(idTurma);
+        return {id: turma.id, nome: turma.nome};
+    }
+
+   dadosEquipes(){
+    return this.equipes.map( e => ({id: e, idturma: t.id, modalidade: e.modalidade, atletas: e.atletas[]}))
+   } 
+
+   dadosDaEquipe(idEquipe){
+        const equipe = this.buscarEquipeOuFalhar(idEquipe);
+        return {id: equipe.id, nome: equipe.nome }
+   }
+
+
 
 
 
