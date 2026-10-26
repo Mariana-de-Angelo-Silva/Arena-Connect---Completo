@@ -9,7 +9,7 @@ function main() {
     const sistema = ArenaConnect.getInstancia();
 
     while (true) {
-        const op = MenuView.mostraMenu();
+        const op = MenuView.mostrarMenu();
         if (op === '1') sistema.adicionarTurma();
         else if (op === '2') sistema.listarTurmas();
         else if (op === '3') AtletaController.adicionar(sistema);

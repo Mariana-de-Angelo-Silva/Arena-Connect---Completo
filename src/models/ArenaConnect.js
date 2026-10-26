@@ -1,5 +1,5 @@
-const Modalidade = require('.//src/models/Modalidade');
-const CadastroFactory = require('./src/models/CadastroFactory');
+const Modalidade = require('./Modalidade');
+const CadastroFactory = require('./CadastroFactory');
 const { calcularClassificacao } = require('./Classificacao');
 const fn = require ('fs');
 const path = require ('path');
@@ -43,14 +43,32 @@ class ArenaConnect {
         this.idEquipeContador = 1;
     }
 
-    adicionarTurma() {
-        const nome = prompt("Nome da nova turma: ");
-        try {
-            this.turmas.push(CadastroFactory.criarTurma(this.idTurmaContador, nome));
-            this.idTurmaContador++;
-        } catch (erro) {
-            console.log(`✖ Turma não registrada: ${erro.message}`);
+    adicionarTurma(nome){ //pede pra criar a turma
+        const turma = CadastroFactory.criarTurma(this.idTurmaContador, nome); // manda o pedido pro cadastrofactory
+        this.idTurmaContador++; // add ela no id contador (crianodo um id pra ela)
+        this.turmas.push(turma); //ativando um criar turma
+        return turma;
+    }
+
+    editarTurma(idTurma, novoNome){ // pede pra editar turma
+        const turma = this.buscarTurmaOuFalhar(idTurma); // mostra s turmas que tem com o buscarTurma passando o id
+        CadastroFactory.criarTurma(idTurma, novoNome)// ele não cria uma nova turma, ele só faz a verificação dos novos dados e informa se houverem erros 
+        turma.nome = novoNome;
+        return turma;
+        //não precisamos de um push, pois ele cria novas turmas e nesse caso apenas atualiza o objeto
+    }
+
+    removerTurma(idTurma){
+        const turma = this.buscarTurmaOuFalhar(idTurma);
+        if(this.atletas.some(a => a.idTurma === idTurma)){
+            throw new Error (`a turma ${turma.nome} ainda possui atletas. Remova ou mude os atletas antes.`);
         }
+
+        if(this.equipes.some(e => e.idTurma === idTurma)){
+            throw new Error(`a turma ${turma.nome} ainda possui equipes. Remova ou mude as equipes antes.`)
+        }
+        this.turmas = this.turmas.filter(t => t.id !== turma.id);
+        return turma;
     }
 
     listarTurmas() {
@@ -123,8 +141,7 @@ class ArenaConnect {
         this.arbitros.forEach(a => a.exibir());
     }
 
-    // NOVO (Clean Code): verificação booleana extraída e nomeada — antes
-    // vivia como uma variável `duplicada` inline dentro de adicionarEquipe().
+
     equipeJaExiste(idTurma, modalidade) {
         return this.equipes.some(e => e.idTurma === idTurma && e.modalidade === modalidade);
     }
@@ -226,9 +243,16 @@ class ArenaConnect {
             const equipes = this.equipes.filter(e => e.modalidade === modalidade);
             const partidas = this.partidas.filter(p => p.modalidade === modalidade);
             const linhas = calcularClassificacao(equipes, partidas)
-                .map(l => ({ ...l, nomeEquipe: this.rotularEquipe(l.idEquipe) }));
+                .map(l => ({ ...l, nomeEquipe: this.#rotularEquipe(l.idEquipe) }));
             return { modalidade, linhas };
         });
+    }
+
+    #rotularEquipe(idEquipe){
+        const equipe = this.equipes.find(e => e.id === idEquipe);
+        if (!equipe) return 'Equipe não encontrada';
+        const turma = this.turmas.find(t => t.id === equipe.idTurma);
+        return `${turma ? turma.nome : '?'} (${equipe.modalidade})`;
     }
 
     dadosTurmas(){
@@ -241,20 +265,96 @@ class ArenaConnect {
     }
 
    dadosEquipes(){
-    return this.equipes.map( e => ({id: e, idturma: t.id, modalidade: e.modalidade, atletas: e.atletas[]}))
+    return this.equipes.map( e => this.#dadosDaEquipe(e))
    } 
 
    dadosDaEquipe(idEquipe){
-        const equipe = this.buscarEquipeOuFalhar(idEquipe);
-        return {id: equipe.id, nome: equipe.nome }
+        return this.#dadosDaEquipe(this.buscarEquipeOuFalhar(idEquipe));
    }
 
 
+   #dadosDaEquipe(e){
+        return{
+            id: e.id,
+            turmas: this.turmas.find(t => t.id === e.idTurma)?.nome?? 'Turma não encontrada', atletas: e.atletas
+            .map(idA => this.atletas
+            .find(a => a.id === idA))
+            .filter(a => a)
+            .map(a => a.nome),
+        }
+   }
 
+   dadosPartidas(){
+        return this.partidas.map(p => ({
+            id: p.id,
+            modalidade: p.modalidade,
+            equipeA: this.#rotularEquipe(p.idEquipeA),
+            equipeB: this.#rotularEquipe(p.idEquipeB),
+            golsA: p.placar.golsA,
+            golsB: p.placar.golsB,
+        }));
+   }
+   carregarEstado(silencioso=false) {
+        if (!fs.existsSync(ARQUIVO_DADOS)) {
+            console.log('Nenhum estado salvo encontrado ainda — começando do zero.');
+            return;
+        }
+        const dados = JSON.parse(fs.readFileSync(ARQUIVO_DADOS, 'utf-8'));
 
+        this.turmas = dados.turmas.map(t => CadastroFactory.criarTurma(t.id, t.nome));
+        this.atletas = dados.atletas.map(a => CadastroFactory.criarAtleta(a.id, a.nome, a.idTurma));
+        this.arbitros = dados.arbitros.map(a => CadastroFactory.criarArbitro(a.id, a.nome, a.numeroCredencial, a.anosExperiencia));
 
+        this.equipes = dados.equipes.map(e => {
+            const equipe = CadastroFactory.criarEquipe(e.id, e.idTurma, e.modalidade);
+            // #atletas é privado e não tem setter — reconstruímos chamando o
+            // mesmo método público usado no fluxo normal, um ID de cada vez.
+            e.atletas.forEach(idAtleta => equipe.adicionarAtleta(idAtleta));
+            return equipe;
+        });
+        this.partidas = dados.partidas.map(p => {
+            return CadastroFactory.criarPartida(p.id, p.idEquipeA, p.idEquipeB, p.modalidade, p.golsA, p.golsB);
+        });
 
+        this.idTurmaContador = dados.idTurmaContador;
+        this.idAtletaContador = dados.idAtletaContador;
+        this.idArbitroContador = dados.idArbitroContador;
+        this.idEquipeContador = dados.idEquipeContador;
+        this.idPartidaContador = dados.idPartidaContador;
+        console.log(`✔ Estado carregado: ${this.turmas.length} turma(s), ${this.atletas.length} atleta(s), 
+            ${this.equipes.length} equipe(s), ${this.partidas.length} partida(s).`);
+
+            if (!silencioso) {
+            console.log(`✔ Estado carregado: ${this.turmas.length} turma(s), ${this.atletas.length} atleta(s), 
+            ${this.equipes.length} equipe(s), ${this.partidas.length} partida(s).`);
+        }
+    }
+
+    
+     salvarEstado() {
+        const dados = {
+            turmas: this.turmas.map(t => ({ id: t.id, nome: t.nome })),
+            atletas: this.atletas.map(a => ({ id: a.id, nome: a.nome, idTurma: a.idTurma })),
+            arbitros: this.arbitros.map(a => ({ id: a.id, nome: a.nome,
+                numeroCredencial: a.numeroCredencial, anosExperiencia: a.anosExperiencia })),
+            equipes: this.equipes.map(e => ({ id: e.id, idTurma: e.idTurma, 
+                modalidade: e.modalidade, atletas: e.atletas })),
+            partidas: this.partidas.map(p => ({
+                id: p.id, idEquipeA: p.idEquipeA, idEquipeB: p.idEquipeB, modalidade: p.modalidade,
+                golsA: p.placar.golsA, golsB: p.placar.golsB,
+            })),
+
+            idTurmaContador: this.idTurmaContador,
+            idAtletaContador: this.idAtletaContador,
+            idArbitroContador: this.idArbitroContador,
+            idEquipeContador: this.idEquipeContador,
+            idPartidaContador: this.idPartidaContador,
+        };
+        fs.writeFileSync(ARQUIVO_DADOS, JSON.stringify(dados, null, 2));
+        console.log(`✔ Estado salvo em ${ARQUIVO_DADOS}`);
+    }
 }
+
 
 
 module.exports = ArenaConnect;
